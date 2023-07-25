@@ -6,8 +6,6 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 
-url = "https://tululu.org/txt.php"
-
 os.makedirs('books', exist_ok=True)
 os.makedirs('imgs', exist_ok=True)
 
@@ -17,7 +15,7 @@ def check_for_redirect(response):
         raise requests.HTTPError
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(url, filename, book_id, folder='books/'):
     """Функция для скачивания текстовых файлов.
     Args:
         url (str): Cсылка на текст, который хочется скачать.
@@ -26,7 +24,9 @@ def download_txt(url, filename, folder='books/'):
     Returns:
         str: Путь до файла, куда сохранён текст.
     """
-    response = requests.get(url)
+    params = {'id': book_id}
+
+    response = requests.get(url, params=params)
     response.raise_for_status()
     try:
         check_for_redirect(response)
@@ -50,6 +50,10 @@ def download_image(url, filename, folder='imgs/'):
         """
     response = requests.get(url)
     response.raise_for_status()
+    try:
+        check_for_redirect(response)
+    except requests.HTTPError:
+        return
 
     filename = sanitize_filename(filename)
     path = os.path.join(folder, filename)
@@ -63,12 +67,12 @@ def parse_book_page(page_html):
 
     title = soup.find('div', id='content').find('h1').text
     book_title, author_name = title.split('::')
-    book['book_title'] = book_title.strip()
+    book['title'] = book_title.strip()
     book['author_name'] = author_name.strip()
 
-    # get book image
+    # get book image path and name
     img_path = soup.find('div', class_='bookimage').find('img')['src']
-    book['img_url'] = urljoin(book_url, img_path)
+    book['img_path'] = img_path
     book['img_name'] = img_path.split('/')[-1]
 
     # get comments
@@ -94,12 +98,15 @@ if __name__ == '__main__':
     parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
     args = parser.parse_args()
 
+    page_base_url = 'https://tululu.org/'
+    download_base_url = 'https://tululu.org/txt.php'
+
     for book_id in range(args.start_id, args.end_id+1):
-        book_url = f'https://tululu.org/b{book_id}/'
+        book_page_url = urljoin(page_base_url, f'b{book_id}/')
         book_download_url = f'https://tululu.org/txt.php?id={book_id}'
 
         # get book html
-        response = requests.get(book_url)
+        response = requests.get(book_page_url)
         response.raise_for_status()
         try:
             check_for_redirect(response)
@@ -108,13 +115,10 @@ if __name__ == '__main__':
 
         book = parse_book_page(response.text)
 
-        #download_image(url, img_name, folder='imgs/')
+        # download book image
+        img_url = urljoin(book_page_url, book['img_path'])
+        download_image(img_url, book['img_name'], folder='imgs/')
 
-        # get book text
-        #filename = f'{book_id}. {book_title}.txt'
-        #download_txt(book_download_url, filename)
-
-        print(book_id)
-        print(book)
-
-
+        # download book text
+        filename = f'{book_id}. {book["title"]}.txt'
+        download_txt(download_base_url, filename, book_id)
