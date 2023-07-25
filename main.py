@@ -17,12 +17,13 @@ def check_for_redirect(response):
 
 def download_txt(url, filename, book_id, folder='books/'):
     """Функция для скачивания текстовых файлов.
-    Args:
-        url (str): Cсылка на текст, который хочется скачать.
-        filename (str): Имя файла, с которым сохранять.
-        folder (str): Папка, куда сохранять.
-    Returns:
-        str: Путь до файла, куда сохранён текст.
+        Args:
+            url (str): Cсылка на текст, который хочется скачать.
+            filename (str): Имя файла, с которым сохранять.
+            book_id (int): id книги, которую нужно скачать.
+            folder (str): Папка, куда сохранять.
+        Returns:
+            str: Путь до файла, куда сохранён текст.
     """
     params = {'id': book_id}
 
@@ -47,7 +48,7 @@ def download_image(url, filename, folder='imgs/'):
             folder (str): Папка, куда сохранять.
         Returns:
             str: Путь до файла, куда сохранено изображение.
-        """
+    """
     response = requests.get(url)
     response.raise_for_status()
     try:
@@ -62,6 +63,12 @@ def download_image(url, filename, folder='imgs/'):
 
 
 def parse_book_page(page_html):
+    """Функция для получения данных книги из страницы книги .
+        Args:
+            page_html (str): HTML-код страницы книги.
+        Returns:
+            dict: Параметры книги.
+    """
     soup = BeautifulSoup(page_html, 'lxml')
     book = {}
 
