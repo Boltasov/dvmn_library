@@ -93,15 +93,23 @@ if __name__ == '__main__':
         author_name = author_name.strip()
 
         # get book image
-        img_path = soup.find('div', class_='bookimage').find('img')['src']
-        img_url = urljoin(book_url, img_path)
-        img_name = img_path.split('/')[-1]
+        #img_path = soup.find('div', class_='bookimage').find('img')['src']
+        #img_url = urljoin(book_url, img_path)
+        #img_name = img_path.split('/')[-1]
 
-        download_image(url, img_name, folder='imgs/')
+        #download_image(url, img_name, folder='imgs/')
 
         # get book text
         #filename = f'{book_id}. {book_title}.txt'
         #download_txt(book_download_url, filename)
-        print(img_url)
+
+        # get comments
+        comments = []
+        comment_blocks = soup.find_all('div', class_='texts')
+        for comment in comment_blocks:
+            print(comment.find('span').text)
+
+        #print(img_url)
+        #print(soup)
 
 
