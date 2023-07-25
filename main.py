@@ -104,12 +104,18 @@ if __name__ == '__main__':
         #download_txt(book_download_url, filename)
 
         # get comments
-        comments = []
-        comment_blocks = soup.find_all('div', class_='texts')
-        for comment in comment_blocks:
-            print(comment.find('span').text)
+        #comments = []
+        #comment_blocks = soup.find_all('div', class_='texts')
+        #for comment in comment_blocks:
+        #    comments.append(comment.find('span').text)
 
-        #print(img_url)
-        #print(soup)
+        # get genres
+        genres = []
+        genre_blocks = soup.find('span', class_='d_book').find_all('a')
+        for genre in genre_blocks:
+            genres.append(genre.text)
+
+        print(book_title)
+        print(genres)
 
 
