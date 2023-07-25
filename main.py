@@ -1,5 +1,6 @@
 import os
 import requests
+import argparse
 
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
@@ -56,25 +57,8 @@ def download_image(url, filename, folder='imgs/'):
         file.write(response.content)
 
 
-def download_book(book_id):
-    params = {
-        "id": book_id,
-    }
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    try:
-        check_for_redirect(response)
-    except requests.HTTPError:
-        return
-
-    filename = f'id{book_id}.txt'
-    with open(f'books/{filename}', 'wb') as file:
-        file.write(response.content)
-
-
 def parse_book_page(page_html):
     soup = BeautifulSoup(page_html, 'lxml')
-
     book = {}
 
     title = soup.find('div', id='content').find('h1').text
@@ -92,7 +76,6 @@ def parse_book_page(page_html):
     comment_blocks = soup.find_all('div', class_='texts')
     for comment in comment_blocks:
         comments.append(comment.find('span').text)
-
     book['comments'] = comments
 
     # get genres
@@ -100,14 +83,18 @@ def parse_book_page(page_html):
     genre_blocks = soup.find('span', class_='d_book').find_all('a')
     for genre in genre_blocks:
         genres.append(genre.text)
-
     book['genres'] = genres
 
     return book
 
 
 if __name__ == '__main__':
-    for book_id in range(1, 10):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
+    parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
+    args = parser.parse_args()
+
+    for book_id in range(args.start_id, args.end_id+1):
         book_url = f'https://tululu.org/b{book_id}/'
         book_download_url = f'https://tululu.org/txt.php?id={book_id}'
 
@@ -127,6 +114,7 @@ if __name__ == '__main__':
         #filename = f'{book_id}. {book_title}.txt'
         #download_txt(book_download_url, filename)
 
+        print(book_id)
         print(book)
 
 
