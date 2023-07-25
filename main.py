@@ -110,7 +110,6 @@ if __name__ == '__main__':
 
     for book_id in range(args.start_id, args.end_id+1):
         book_page_url = urljoin(page_base_url, f'b{book_id}/')
-        book_download_url = f'https://tululu.org/txt.php?id={book_id}'
 
         # get book html
         response = requests.get(book_page_url)
