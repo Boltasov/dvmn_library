@@ -92,28 +92,30 @@ def parse_book_page(page_html):
             dict: Параметры книги.
     """
     soup = BeautifulSoup(page_html, 'lxml')
-    book = {}
 
     title = soup.find('div', id='content').find('h1').text
     book_title, author_name = title.split('::')
-    book['title'] = book_title.strip()
-    book['author_name'] = author_name.strip()
 
     img_path = soup.find('div', class_='bookimage').find('img')['src']
-    book['img_path'] = img_path
-    book['img_name'] = img_path.split('/')[-1]
 
     comments = []
     comment_blocks = soup.find_all('div', class_='texts')
     for comment in comment_blocks:
         comments.append(comment.find('span').text)
-    book['comments'] = comments
 
     genres = []
     genre_blocks = soup.find('span', class_='d_book').find_all('a')
     for genre in genre_blocks:
         genres.append(genre.text)
-    book['genres'] = genres
+
+    book = {
+        'title': book_title.strip(),
+        'author_name': author_name.strip(),
+        'img_path': img_path,
+        'img_name': img_path.split('/')[-1],
+        'comments': comments,
+        'genres': genres,
+    }
 
     return book
 
