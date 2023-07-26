@@ -74,19 +74,16 @@ def parse_book_page(page_html):
     book['title'] = book_title.strip()
     book['author_name'] = author_name.strip()
 
-    # get book image path and name
     img_path = soup.find('div', class_='bookimage').find('img')['src']
     book['img_path'] = img_path
     book['img_name'] = img_path.split('/')[-1]
 
-    # get comments
     comments = []
     comment_blocks = soup.find_all('div', class_='texts')
     for comment in comment_blocks:
         comments.append(comment.find('span').text)
     book['comments'] = comments
 
-    # get genres
     genres = []
     genre_blocks = soup.find('span', class_='d_book').find_all('a')
     for genre in genre_blocks:
@@ -106,7 +103,6 @@ def main(start_id, end_id):
     for book_id in range(start_id, end_id+1):
         book_page_url = urljoin(page_base_url, f'b{book_id}/')
 
-        # get book html
         response = requests.get(book_page_url)
         response.raise_for_status()
         try:
@@ -116,11 +112,9 @@ def main(start_id, end_id):
 
         book = parse_book_page(response.text)
 
-        # download book image
         img_url = urljoin(book_page_url, book['img_path'])
         download_image(img_url, book['img_name'], folder='imgs/')
 
-        # download book text
         filename = f'{book_id}. {book["title"]}.txt'
         download_txt(download_base_url, filename, book_id)
 
