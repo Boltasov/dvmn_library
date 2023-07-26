@@ -126,7 +126,10 @@ def main(start_id, end_id):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog='BookParser',
+        description='Скрипт загружает книги в указанном диапазоне id с сайта tululu.org',
+    )
     parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
     parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
     args = parser.parse_args()
