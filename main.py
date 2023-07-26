@@ -49,7 +49,6 @@ def download_txt(url, filename, book_id, folder='books/'):
         check_for_redirect(response)
     except requests.HTTPError as e:
         logging.error(f'Текст книги не найден. id: {book_id}\n' + str(e))
-        sys.stderr.write(str(e))
 
     filename = sanitize_filename(filename)
     path = os.path.join(folder, filename)
@@ -76,7 +75,6 @@ def download_image(url, filename, folder='imgs/'):
         check_for_redirect(response)
     except requests.HTTPError as e:
         logging.error(f'Изображение не найдено\n' + str(e))
-        sys.stderr.write(str(e))
 
     filename = sanitize_filename(filename)
     path = os.path.join(folder, filename)
@@ -136,16 +134,21 @@ def main(start_id, end_id):
             check_for_redirect(response)
         except requests.HTTPError as e:
             logging.error(f'Книга не найдена. id: {book_id}\n {str(e)}')
-            sys.stderr.write(str(e))
             continue
 
         book = parse_book_page(response.text)
 
         img_url = urljoin(book_page_url, book['img_path'])
-        download_image(img_url, book['img_name'], folder='imgs/')
+        try:
+            download_image(img_url, book['img_name'], folder='imgs/')
+        except requests.HTTPError as e:
+            logging.error(f'Изображение не найдено\n' + str(e))
 
         filename = f'{book_id}. {book["title"]}.txt'
-        download_txt(download_base_url, filename, book_id)
+        try:
+            download_txt(download_base_url, filename, book_id)
+        except requests.HTTPError as e:
+            logging.error(f'Текст книги не найден. id: {book_id}\n' + str(e))
 
 
 if __name__ == '__main__':
