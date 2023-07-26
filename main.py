@@ -6,9 +6,6 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 
-os.makedirs('books', exist_ok=True)
-os.makedirs('imgs', exist_ok=True)
-
 
 def check_for_redirect(response):
     if response.history:
@@ -99,16 +96,14 @@ def parse_book_page(page_html):
     return book
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
-    parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
-    args = parser.parse_args()
+def main(start_id, end_id):
+    os.makedirs('books', exist_ok=True)
+    os.makedirs('imgs', exist_ok=True)
 
     page_base_url = 'https://tululu.org/'
     download_base_url = 'https://tululu.org/txt.php'
 
-    for book_id in range(args.start_id, args.end_id+1):
+    for book_id in range(start_id, end_id+1):
         book_page_url = urljoin(page_base_url, f'b{book_id}/')
 
         # get book html
@@ -128,3 +123,12 @@ if __name__ == '__main__':
         # download book text
         filename = f'{book_id}. {book["title"]}.txt'
         download_txt(download_base_url, filename, book_id)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
+    parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
+    args = parser.parse_args()
+
+    main(args.start_id, args.end_id)
