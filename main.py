@@ -39,16 +39,8 @@ def download_txt(url, filename, book_id, folder='books/'):
     """
     params = {'id': book_id}
 
-    try:
-        response = safe_get(url, params)
-    except requests.HTTPError as e:
-        logging.error(f'HTTPError для ссылки {url}' + str(e))
-        return
-
-    try:
-        check_for_redirect(response)
-    except requests.HTTPError as e:
-        logging.error(f'Текст книги не найден. id: {book_id}\n' + str(e))
+    response = safe_get(url, params)
+    check_for_redirect(response)
 
     filename = sanitize_filename(filename)
     path = os.path.join(folder, filename)
@@ -65,16 +57,8 @@ def download_image(url, filename, folder='imgs/'):
         Returns:
             str: Путь до файла, куда сохранено изображение.
     """
-    try:
-        response = safe_get(url)
-    except requests.HTTPError as e:
-        logging.error(f'HTTPError для ссылки {url}' + str(e))
-        return
-
-    try:
-        check_for_redirect(response)
-    except requests.HTTPError as e:
-        logging.error(f'Изображение не найдено\n' + str(e))
+    response = safe_get(url)
+    check_for_redirect(response)
 
     filename = sanitize_filename(filename)
     path = os.path.join(folder, filename)
