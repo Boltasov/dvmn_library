@@ -114,14 +114,22 @@ def parse_book_page(page_html):
     return book
 
 
-def main(start_id, end_id):
+def main():
+    parser = argparse.ArgumentParser(
+        prog='BookParser',
+        description='Скрипт загружает книги в указанном диапазоне id с сайта tululu.org',
+    )
+    parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
+    parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
+    args = parser.parse_args()
+
     os.makedirs('books', exist_ok=True)
     os.makedirs('imgs', exist_ok=True)
 
     page_base_url = 'https://tululu.org/'
     download_base_url = 'https://tululu.org/txt.php'
 
-    for book_id in range(start_id, end_id+1):
+    for book_id in range(args.start_id, args.end_id+1):
         book_page_url = urljoin(page_base_url, f'b{book_id}/')
 
         try:
@@ -152,12 +160,4 @@ def main(start_id, end_id):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        prog='BookParser',
-        description='Скрипт загружает книги в указанном диапазоне id с сайта tululu.org',
-    )
-    parser.add_argument("start_id", help='ID книги, с которой начнём парсить', type=int)
-    parser.add_argument("end_id", help='ID книги, на которой закончим парсить', type=int)
-    args = parser.parse_args()
-
-    main(args.start_id, args.end_id)
+    main()
