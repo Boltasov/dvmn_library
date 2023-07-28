@@ -20,8 +20,7 @@ def safe_get(url, params=None):
         try:
             response = requests.get(url, params)
             response.raise_for_status()
-            if response.status_code == 200:
-                return response
+            return response
         except requests.ConnectionError as e:
             logging.error('Ошибка соединения' + str(e))
             time.sleep(5)
