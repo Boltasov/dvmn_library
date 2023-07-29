@@ -1,6 +1,5 @@
 import os
 import time
-import sys
 import requests
 import argparse
 import logging
@@ -26,7 +25,7 @@ def safe_get(url, params=None):
             time.sleep(5)
 
 
-def download_txt(url, filename, book_id, folder='books/'):
+def download_txt(url, filename, folder='books/'):
     """Функция для скачивания текстовых файлов.
         Args:
             url (str): Cсылка на текст, который хочется скачать.
@@ -36,9 +35,9 @@ def download_txt(url, filename, book_id, folder='books/'):
         Returns:
             str: Путь до файла, куда сохранён текст.
     """
-    params = {'id': book_id}
+    # params = {'id': book_id}
 
-    response = safe_get(url, params)
+    response = safe_get(url)
     check_for_redirect(response)
 
     filename = sanitize_filename(filename)
@@ -85,6 +84,10 @@ def parse_book_page(page_html):
     genre_blocks = soup.find('span', class_='d_book').find_all('a')
     genres = [genre.text for genre in genre_blocks]
 
+    text_path = soup.find('a', string='скачать txt')
+    if text_path:
+        text_path = text_path['href']
+
     book = {
         'title': book_title.strip(),
         'author_name': author_name.strip(),
@@ -92,6 +95,7 @@ def parse_book_page(page_html):
         'img_name': img_path.split('/')[-1],
         'comments': comments,
         'genres': genres,
+        'text_path': text_path
     }
 
     return book
@@ -136,8 +140,9 @@ def main():
             logging.error(f'Изображение не найдено\n' + str(e))
 
         filename = f'{book_id}. {book["title"]}.txt'
+        download_text_url = urljoin(download_base_url, f'?id={book_id}')
         try:
-            download_txt(download_base_url, filename, book_id)
+            download_txt(download_text_url, filename)
         except requests.HTTPError as e:
             logging.error(f'Текст книги не найден. id: {book_id}\n' + str(e))
 
