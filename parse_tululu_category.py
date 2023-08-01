@@ -32,7 +32,6 @@ def parse_book_urls(start_page, end_page):
             book_path = book.select_one('a')['href']
             book_url = urljoin(base_url, book_path)
             book_urls.append(book_url)
-        break
 
     return book_urls
 
@@ -64,30 +63,30 @@ def main():
     for book_url in book_urls:
         try:
             response = safe_get(book_url)
+            book = parse_book_page(response.text)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n' + str(e))
             continue
-        else:
-            book = parse_book_page(response.text)
 
-        if book['text_path']:
-            if not args.skip_txt:
-                filename = f'{book["title"]}.txt'
-                download_text_url = urljoin(book_url, book['text_path'])
-                print(download_text_url)
-                try:
-                    download_txt(download_text_url, filename, folder=books_folder)
-                except requests.HTTPError as e:
-                    logging.error(f'Текст книги не найден.\n' + str(e))
+        if not book['text_path']:
+            continue
 
-            if not args.skip_imgs:
-                img_url = urljoin(book_url, book['img_path'])
-                try:
-                    download_image(img_url, book['img_name'], folder=img_folder)
-                except requests.HTTPError as e:
-                    logging.error(f'Изображение не найдено\n' + str(e))
+        if not args.skip_txt:
+            filename = f'{book["title"]}.txt'
+            download_text_url = urljoin(book_url, book['text_path'])
+            try:
+                download_txt(download_text_url, filename, folder=books_folder)
+            except requests.HTTPError as e:
+                logging.error(f'Текст книги не найден.\n' + str(e))
 
-            books.append(book)
+        if not args.skip_imgs:
+            img_url = urljoin(book_url, book['img_path'])
+            try:
+                download_image(img_url, book['img_name'], folder=img_folder)
+            except requests.HTTPError as e:
+                logging.error(f'Изображение не найдено\n' + str(e))
+
+        books.append(book)
 
     books_json = json.dumps(books, ensure_ascii=False, indent=4)
     with open(os.path.join(folder, 'books.txt'), 'w') as books_file:
