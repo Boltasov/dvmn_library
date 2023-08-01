@@ -91,7 +91,7 @@ def main():
     books_json = json.dumps(books, ensure_ascii=False, indent=4)
     with open(os.path.join(folder, 'books.txt'), 'w') as books_file:
         books_file.write(books_json)
-        print('Done writing list into a file')
+    print('Done writing books into a file')
 
 
 if __name__ == '__main__':
