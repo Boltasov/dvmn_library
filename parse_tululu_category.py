@@ -6,7 +6,7 @@ import argparse
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from main import parse_book_page, download_txt, download_image
+from main import parse_book_page, download_txt, download_image, safe_get
 
 
 def parse_book_urls(start_page, end_page):
@@ -60,8 +60,10 @@ def main():
     books = []
 
     for book_url in book_urls:
-        response = requests.get(book_url)
-        response.raise_for_status()
+        try:
+            response = safe_get(book_url)
+        except requests.HTTPError as e:
+            logging.error(f'Страница книги не найдена.\n' + str(e))
         print(book_url)
 
         book = parse_book_page(response.text)
