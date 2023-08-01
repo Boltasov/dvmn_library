@@ -35,7 +35,6 @@ def download_txt(url, filename, folder='books/'):
         Returns:
             str: Путь до файла, куда сохранён текст.
     """
-    # params = {'id': book_id}
 
     response = safe_get(url)
     check_for_redirect(response)
@@ -76,7 +75,6 @@ def parse_book_page(page_html):
     title = soup.select_one('div#content h1').text
     book_title, author_name = title.split('::')
 
-    #img_path = soup.find('div', class_='bookimage').find('img')['src']
     img_path = soup.select_one('div.bookimage img')['src']
 
     comment_blocks = soup.select('div.texts')
