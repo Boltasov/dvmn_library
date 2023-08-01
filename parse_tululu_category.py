@@ -88,9 +88,8 @@ def main():
 
         books.append(book)
 
-    books_json = json.dumps(books, ensure_ascii=False, indent=4)
     with open(os.path.join(folder, 'books.txt'), 'w') as books_file:
-        books_file.write(books_json)
+        json.dump(books, books_file, ensure_ascii=False, indent=4)
     print('Done writing books into a file')
 
 
