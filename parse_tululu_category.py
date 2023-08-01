@@ -21,7 +21,8 @@ def parse_book_urls(start_page, end_page):
             response = safe_get(page_url)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n' + str(e))
-        
+            continue
+
         soup = BeautifulSoup(response.text, 'lxml')
 
         selector = 'table.d_book'
@@ -66,9 +67,9 @@ def main():
             response = safe_get(book_url)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n' + str(e))
-        print(book_url)
-
-        book = parse_book_page(response.text)
+            continue
+        else:
+            book = parse_book_page(response.text)
 
         if book['text_path']:
             if not args.skip_txt:
