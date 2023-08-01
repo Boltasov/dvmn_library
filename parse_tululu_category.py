@@ -4,6 +4,7 @@ import requests
 import logging
 import argparse
 
+from tqdm import tqdm
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from main import parse_book_page, download_txt, download_image, safe_get
@@ -42,7 +43,7 @@ def main():
         description='Скрипт загружает книги с указанных страниц с сайта tululu.org',
     )
     parser.add_argument("--start_page", help='Номер страницы, с которой начнём парсить', type=int, required=True)
-    parser.add_argument("--end_page", help='Номер страницы, на которой закончим парсить', type=int, default=701)
+    parser.add_argument("--end_page", help='Номер страницы, на которой закончим парсить', type=int, default=702)
     parser.add_argument("--dest_folder", help='Путь к каталогу с результатами парсинга: картинкам, книгам, JSON.',
                         type=str, default='')
     parser.add_argument("--skip_imgs", help='Скачивать ли картинки', action="store_true")
@@ -60,6 +61,7 @@ def main():
 
     books = []
 
+    pbar = tqdm(total=len(book_urls))
     for book_url in book_urls:
         try:
             response = safe_get(book_url)
@@ -69,6 +71,7 @@ def main():
             continue
 
         if not book['text_path']:
+            pbar.update(1)
             continue
 
         if not args.skip_txt:
@@ -87,10 +90,11 @@ def main():
                 logging.error(f'Изображение не найдено\n' + str(e))
 
         books.append(book)
+        pbar.update(1)
+    pbar.close()
 
     with open(os.path.join(folder, 'books.txt'), 'w') as books_file:
         json.dump(books, books_file, ensure_ascii=False, indent=4)
-    print('Done writing books into a file')
 
 
 if __name__ == '__main__':
