@@ -41,13 +41,19 @@ def main():
     )
     parser.add_argument("--start_page", help='Номер страницы, с которой начнём парсить', type=int, required=True)
     parser.add_argument("--end_page", help='Номер страницы, на которой закончим парсить', type=int, default=701)
+    parser.add_argument("--dest_folder", help='Путь к каталогу с результатами парсинга: картинкам, книгам, JSON.',
+                        type=str, default='')
     args = parser.parse_args()
+    folder = args.dest_folder
+    books_folder = os.path.join(args.dest_folder, 'books')
+    img_folder = os.path.join(args.dest_folder, 'imgs')
 
     book_urls = parse_book_urls(args.start_page, args.end_page)
     base_url = 'https://tululu.org/'
 
-    os.makedirs('books', exist_ok=True)
-    os.makedirs('imgs', exist_ok=True)
+    print('Path: ', os.path.join(args.dest_folder, 'books'))
+    os.makedirs(books_folder, exist_ok=True)
+    os.makedirs(img_folder, exist_ok=True)
 
     books = []
 
@@ -62,20 +68,20 @@ def main():
             filename = f'{book["title"]}.txt'
             download_text_url = urljoin(base_url, book['text_path'])
             try:
-                download_txt(download_text_url, filename)
+                download_txt(download_text_url, filename, folder=books_folder)
             except requests.HTTPError as e:
                 logging.error(f'Текст книги не найден.\n' + str(e))
 
             img_url = urljoin(book_url, book['img_path'])
             try:
-                download_image(img_url, book['img_name'], folder='imgs/')
+                download_image(img_url, book['img_name'], folder=img_folder)
             except requests.HTTPError as e:
                 logging.error(f'Изображение не найдено\n' + str(e))
 
             books.append(book)
 
     books_json = json.dumps(books, ensure_ascii=False, indent=4)
-    with open('books.txt', 'w') as books_file:
+    with open(os.path.join(folder, 'books.txt'), 'w') as books_file:
         books_file.write(books_json)
         print('Done writing list into a file')
 
