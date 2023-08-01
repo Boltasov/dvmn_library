@@ -13,7 +13,6 @@ def parse_book_urls(start_page, end_page):
     science_fiction_url = 'https://tululu.org/l55/'
     base_url = 'https://tululu.org/'
 
-    # book_id_urls = []
     book_urls = []
     for page in range(start_page, end_page+1):
         page_url = urljoin(science_fiction_url, f'{page}/')
