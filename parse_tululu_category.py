@@ -55,7 +55,6 @@ def main():
     img_folder = os.path.join(args.dest_folder, 'imgs')
 
     book_urls = parse_book_urls(args.start_page, args.end_page)
-    base_url = 'https://tululu.org/'
 
     os.makedirs(books_folder, exist_ok=True)
     os.makedirs(img_folder, exist_ok=True)
@@ -74,7 +73,8 @@ def main():
         if book['text_path']:
             if not args.skip_txt:
                 filename = f'{book["title"]}.txt'
-                download_text_url = urljoin(base_url, book['text_path'])
+                download_text_url = urljoin(book_url, book['text_path'])
+                print(download_text_url)
                 try:
                     download_txt(download_text_url, filename, folder=books_folder)
                 except requests.HTTPError as e:
