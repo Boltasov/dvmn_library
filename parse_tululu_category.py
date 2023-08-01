@@ -17,8 +17,10 @@ def parse_book_urls(start_page, end_page):
     for page in range(start_page, end_page):
         page_url = urljoin(science_fiction_url, f'{page}/')
 
-        response = requests.get(page_url)
-        response.raise_for_status()
+        try:
+            response = safe_get(page_url)
+        except requests.HTTPError as e:
+            logging.error(f'Страница книги не найдена.\n' + str(e))
         
         soup = BeautifulSoup(response.text, 'lxml')
 
