@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import logging
+import pickle
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -21,17 +22,19 @@ def parse_book_urls():
         response.raise_for_status()
         
         soup = BeautifulSoup(response.text, 'lxml')
-        
-        books = soup.find_all('table', class_='d_book')
+
+        selector = 'table.d_book'
+        books = soup.select(selector)
 
         for book in books:
-            book_path = book.find('a')['href']
+            book_path = book.select_one('a')['href']
             # book_id = "".join(symbol for symbol in book_path if symbol.isdecimal())
             book_url = urljoin(base_url, book_path)
             # book_id_url = {"id": book_id, "url": book_url}
             # book_id_urls.append(book_id_url)
             book_urls.append(book_url)
-        
+        break
+
     return book_urls
 
 
@@ -42,13 +45,13 @@ if __name__ == '__main__':
     os.makedirs('books', exist_ok=True)
     os.makedirs('imgs', exist_ok=True)
 
+    books = []
+
     for book_url in book_urls:
         response = requests.get(book_url)
         response.raise_for_status()
 
         book = parse_book_page(response.text)
-
-        books_file = open("books.txt", "a")
 
         if book['text_path']:
             filename = f'{book["title"]}.txt'
@@ -64,9 +67,11 @@ if __name__ == '__main__':
             except requests.HTTPError as e:
                 logging.error(f'Изображение не найдено\n' + str(e))
 
-            book_json = json.dumps(book, ensure_ascii=False, indent=4)
-
-            books_file.write(book_json)
-            books_file.close()
+            books.append(book)
 
             print(f'{book["title"]}')
+
+    books_json = json.dumps(books, ensure_ascii=False, indent=4)
+    with open('books.txt', 'w') as books_file:
+        books_file.write(books_json)
+        print('Done writing list into a file')

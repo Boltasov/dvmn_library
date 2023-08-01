@@ -73,15 +73,16 @@ def parse_book_page(page_html):
     """
     soup = BeautifulSoup(page_html, 'lxml')
 
-    title = soup.find('div', id='content').find('h1').text
+    title = soup.select_one('div#content h1').text
     book_title, author_name = title.split('::')
 
-    img_path = soup.find('div', class_='bookimage').find('img')['src']
+    #img_path = soup.find('div', class_='bookimage').find('img')['src']
+    img_path = soup.select_one('div.bookimage img')['src']
 
-    comment_blocks = soup.find_all('div', class_='texts')
-    comments = [comment.find('span').text for comment in comment_blocks]
+    comment_blocks = soup.select('div.texts')
+    comments = [comment.select_one('span').text for comment in comment_blocks]
 
-    genre_blocks = soup.find('span', class_='d_book').find_all('a')
+    genre_blocks = soup.select_one('span.d_book').select('a')
     genres = [genre.text for genre in genre_blocks]
 
     text_path = soup.find('a', string='скачать txt')
