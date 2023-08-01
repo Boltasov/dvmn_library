@@ -16,7 +16,6 @@ def parse_book_urls(start_page, end_page):
     book_urls = []
     for page in range(start_page, end_page+1):
         page_url = urljoin(science_fiction_url, f'{page}/')
-        print('Страница:', page_url)
 
         response = requests.get(page_url)
         response.raise_for_status()
@@ -28,10 +27,7 @@ def parse_book_urls(start_page, end_page):
 
         for book in books:
             book_path = book.select_one('a')['href']
-            # book_id = "".join(symbol for symbol in book_path if symbol.isdecimal())
             book_url = urljoin(base_url, book_path)
-            # book_id_url = {"id": book_id, "url": book_url}
-            # book_id_urls.append(book_id_url)
             book_urls.append(book_url)
         break
 
@@ -77,8 +73,6 @@ def main():
                 logging.error(f'Изображение не найдено\n' + str(e))
 
             books.append(book)
-
-            #print(f'{book["title"]}')
 
     books_json = json.dumps(books, ensure_ascii=False, indent=4)
     with open('books.txt', 'w') as books_file:
