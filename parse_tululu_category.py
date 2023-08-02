@@ -12,7 +12,6 @@ from main import parse_book_page, download_txt, download_image, safe_get
 
 def parse_book_urls(start_page, end_page):
     science_fiction_url = 'https://tululu.org/l55/'
-    base_url = 'https://tululu.org/'
 
     book_urls = []
     for page in range(start_page, end_page):
@@ -31,7 +30,7 @@ def parse_book_urls(start_page, end_page):
 
         for book in books:
             book_path = book.select_one('a')['href']
-            book_url = urljoin(base_url, book_path)
+            book_url = urljoin(page_url, book_path)
             book_urls.append(book_url)
 
     return book_urls
