@@ -64,10 +64,11 @@ def main():
     for book_url in book_urls:
         try:
             response = safe_get(book_url)
-            book = parse_book_page(response.text)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n{str(e)}')
             continue
+
+        book = parse_book_page(response.text)
 
         if not book['text_path']:
             pbar.update(1)
