@@ -20,7 +20,7 @@ def parse_book_urls(start_page, end_page):
         try:
             response = safe_get(page_url)
         except requests.HTTPError as e:
-            logging.error(f'Страница книги не найдена.\n' + str(e))
+            logging.error(f'Страница книги не найдена.\n{str(e)}')
             continue
 
         soup = BeautifulSoup(response.text, 'lxml')
@@ -66,7 +66,7 @@ def main():
             response = safe_get(book_url)
             book = parse_book_page(response.text)
         except requests.HTTPError as e:
-            logging.error(f'Страница книги не найдена.\n' + str(e))
+            logging.error(f'Страница книги не найдена.\n{str(e)}')
             continue
 
         if not book['text_path']:
@@ -79,14 +79,14 @@ def main():
             try:
                 download_txt(download_text_url, filename, folder=books_folder)
             except requests.HTTPError as e:
-                logging.error(f'Текст книги не найден.\n' + str(e))
+                logging.error(f'Текст книги не найден.\n{str(e)}')
 
         if not args.skip_imgs:
             img_url = urljoin(book_url, book['img_path'])
             try:
                 download_image(img_url, book['img_name'], folder=img_folder)
             except requests.HTTPError as e:
-                logging.error(f'Изображение не найдено\n' + str(e))
+                logging.error(f'Изображение не найдено\n{str(e)}')
 
         books.append(book)
         pbar.update(1)
