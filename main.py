@@ -136,14 +136,14 @@ def main():
         try:
             download_image(img_url, book['img_name'], folder='imgs/')
         except requests.HTTPError as e:
-            logging.error(f'Изображение не найдено\n' + str(e))
+            logging.error(f'Изображение не найдено\n{str(e)}')
 
         filename = f'{book_id}. {book["title"]}.txt'
         download_text_url = urljoin(download_base_url, f'?id={book_id}')
         try:
             download_txt(download_text_url, filename)
         except requests.HTTPError as e:
-            logging.error(f'Текст книги не найден. id: {book_id}\n' + str(e))
+            logging.error(f'Текст книги не найден. id: {book_id}\n{str(e)}')
 
 
 if __name__ == '__main__':

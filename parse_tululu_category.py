@@ -7,7 +7,7 @@ import argparse
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from main import parse_book_page, download_txt, download_image, safe_get
+from main import parse_book_page, download_txt, download_image, safe_get, check_for_redirect
 
 
 def parse_book_urls(start_page, end_page):
@@ -19,6 +19,7 @@ def parse_book_urls(start_page, end_page):
 
         try:
             response = safe_get(page_url)
+            check_for_redirect(response)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n{str(e)}')
             continue
@@ -64,6 +65,7 @@ def main():
     for book_url in book_urls:
         try:
             response = safe_get(book_url)
+            check_for_redirect(response)
         except requests.HTTPError as e:
             logging.error(f'Страница книги не найдена.\n{str(e)}')
             continue
