@@ -1,7 +1,8 @@
 import json
-from livereload import Server
 
+from livereload import Server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from more_itertools import chunked
 
 
 def build_page():
@@ -15,10 +16,10 @@ def build_page():
     with open('books.txt') as books_file:
         books = json.load(books_file)
 
-    print(books)
+    book_pairs = list(chunked(books, 2))
 
     rendered_page = template.render(
-        books=books,
+        book_pairs=book_pairs,
         imgs_path=f'imgs/'
     )
 
