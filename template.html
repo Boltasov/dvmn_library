@@ -45,8 +45,12 @@
                   <div class="col-md-8">
                     <div class="card-body">
                       <h5 class="card-title">{{book.title}}</h5>
+                      <p>{{book.author_name}}</p>
+                      {% for genre in book.genres %}
+                        <span class="badge badge-light">{{genre}}</span>
+                      {% endfor %}
+                      <hr>
                       <a href="{{books_path + book.title|urlencode}}.txt">Читать</a>
-                      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
                   </div>
                 </div>
