@@ -1,4 +1,5 @@
 import json
+import os
 
 from livereload import Server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -20,8 +21,8 @@ def build_page():
 
     rendered_page = template.render(
         book_pairs=book_pairs,
-        imgs_path='imgs/',
-        books_path='books/',
+        imgs_path=f'imgs{os.sep}',
+        books_path=f'books{os.sep}',
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
