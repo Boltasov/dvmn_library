@@ -2,6 +2,8 @@
 
 Программа предназначена для загрузки книг с сайта https://tululu.org/.
 
+Загруженные книги можно вывести в веб-интерфейс. Пример: https://boltasov.github.io/dvmn_library/pages/index1.html
+
 ### Как установить
 
 Должны быть предустановлены Python 3 и pip.
@@ -49,6 +51,14 @@ python parse_tululu_category.py --start_page=1 --end_page=3 --dest_folder=my_fol
 python parse_tululu_category.py --start_page=1 --end_page=3 --skip_img --skip_txt
 ```
 Будут скачены описания книг в файл `books.txt`.
+
+### Вывести книги в веб-интерфейс
+```commandline
+python render_website.py
+```
+По результатам работы скрипта, появится папка pages, содержащая html-файлы страниц сайта.
+
+При запуске на локальном компьютере по умолчанию сайт будет доступен по адресу http://127.0.0.1:5500/pages/index1.html
 
 ### Цель проекта
 
