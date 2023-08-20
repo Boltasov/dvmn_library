@@ -20,7 +20,8 @@ def build_page():
 
     rendered_page = template.render(
         book_pairs=book_pairs,
-        imgs_path=f'imgs/'
+        imgs_path='imgs/',
+        books_path='books/',
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
