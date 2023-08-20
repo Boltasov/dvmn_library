@@ -53,6 +53,7 @@ python parse_tululu_category.py --start_page=1 --end_page=3 --skip_img --skip_tx
 Будут скачены описания книг в файл `books.txt`.
 
 ### Вывести книги в веб-интерфейс
+После загрузки книг с текстами и изображениями, их можно вывести на сайт командой:
 ```commandline
 python render_website.py
 ```
